@@ -1,0 +1,277 @@
+﻿<UserControl x:Class="DigitalWorkspace.Views.CreateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DigitalWorkspace.Views"
+             xmlns:views="clr-namespace:DigitalWorkspace.Views"
+             xmlns:viewmodels="clr-namespace:DigitalWorkspace.ViewModels"
+             xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="296" d:DesignWidth="252">
+    <Grid Background="White" Margin="0,0,0,0" Height="296" VerticalAlignment="Bottom">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="38*"/>
+            <RowDefinition Height="61*"/>
+            <RowDefinition Height="197*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" x:Name="headerGrid" Background="#F3F3F3"/>
+        <StackPanel Grid.Row="1" Grid.Column="0" x:Name="mainGrid" Margin="0,0,0,135"/>
+        <StackPanel Grid.Row="2" Grid.Column="0" x:Name="footerGrid"/>
+        <Button BorderThickness="0" Background="Transparent" Grid.Row="0" Grid.Column="0" Padding="0,0,0,0" HorizontalAlignment="Left" Command="{Binding LogoutButtonCommand}" Height="16" Margin="12,12,0,0" VerticalAlignment="Top" Width="16">
+            <StackPanel>
+                <Image Source="/Images/AppIcon_16.png">
+
+                </Image>
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding MenuBackButtonCommand}" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="0" Content="Back" Foreground="#6ad1df" BorderBrush="Transparent" Background="Transparent" FontSize="12" Width="37" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0"/>
+        <Label Grid.Row="1" Grid.Column="0" Width="70" Margin="14,15,168,23">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding isEdit}" Value="True">
+                            <Setter Property="Content" Value="Edit a..."/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding isEdit}" Value="False">
+                            <Setter Property="Content" Value="Create a..."/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style>
+        </Label>
+        <Button Command="{Binding MenuTaskButtonCommand}" HorizontalContentAlignment="Right" Grid.Column="0" Grid.Row="1" Content="Tasks" Foreground="{Binding taskMenuColor}" BorderBrush="Transparent" Background="Transparent" FontSize="11" Width="37" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,41,196,0"/>
+        <Button Command="{Binding MenuMeetingButtonCommand}" HorizontalContentAlignment="Right"  Grid.Row="1" Content="Meetings" Foreground="{Binding meetingMenuColor}" BorderBrush="Transparent" Background="Transparent" FontSize="11" Width="56" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,41,124,0"/>
+        <!-- <Label Padding="2" HorizontalContentAlignment="Right" Grid.Column="0" Grid.Row="1" Content="Tasks" Foreground="{Binding taskMenuColor}" BorderBrush="Transparent" Background="Transparent" FontSize="11" Width="37" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,41,196,0"/>
+        <Label Padding="2" HorizontalContentAlignment="Right"  Grid.Row="1" Content="Meetings" Foreground="{Binding meetingMenuColor}" BorderBrush="Transparent" Background="Transparent" FontSize="11" Width="56" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,41,124,0"/> -->
+        <Ellipse Grid.Column="0" Grid.Row="1" Fill="#6ad1df" HorizontalAlignment="Left" Height="4" Stroke="#6ad1df" Width="4" Margin="21,50,0,7"/>
+        <Ellipse Grid.Column="0" Grid.Row="1" Fill="#6ad1df" HorizontalAlignment="Left" Height="4" Stroke="#6ad1df" Width="4" Margin="74,50,0,7"/>
+        <StackPanel Visibility="{Binding taskFormVisible}" Grid.Column="0" Grid.Row="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition Height="197*"/>
+                </Grid.RowDefinitions>
+
+                <TextBox Grid.Column="0" Grid.Row="2" Text="{Binding jobTitle}"  Width="204" BorderBrush="#6ad1df" BorderThickness="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="SearchTermTextBox" Margin="20,21,0,160"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" IsHitTestVisible="False" Text="Job Title" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="22,21,0,160" Foreground="#6ad1df" Opacity=".43" Width="202">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchTermTextBox}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <Label Grid.Row ="2" Content="Tags" Width="Auto" FontSize="10" Height="auto" Margin="22,53,198,116"/>
+                <ScrollViewer x:Name="tagScroll" Grid.Row="2" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Margin="50,54,67,120">
+                    <ListView Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" x:Name="tagList" ItemsSource="{Binding Tags, UpdateSourceTrigger=PropertyChanged}" 
+                  SelectionMode="Extended" Height="23" VerticalAlignment="Top">
+                        <ListView.Resources>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Button Grid.Column="0" Background="#2D3AABCD" BorderThickness="0" Padding="10,0" Command="{Binding DataContext.RemoveTagButtonCommand, ElementName=tagList}" CommandParameter="{Binding name}"
+                                            HorizontalAlignment="Left" Margin="0,0,3,0" Content="{Binding name, Mode=TwoWay}" FontSize="10" Width="Auto" Height="13" FontWeight="Bold">
+                                                    <Button.Resources>
+                                                        <Style TargetType="{x:Type Border}">
+                                                            <Setter Property="CornerRadius" Value="6.5"/>
+                                                        </Style>
+                                                    </Button.Resources>
+                                                </Button>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ListView>
+                </ScrollViewer>
+
+                <TextBox Text="{Binding tagToAdd}" Visibility="{Binding tagFormVisiblity}" Padding="2,3,2,2" FontSize="10" Grid.Row ="2" BorderBrush="#6ad1df" BorderThickness="1"  Margin="50,56,67,123"/>
+                <Button Grid.Row="2" Command="{Binding CreateTagButtonCommand}" Background="#2D3AABCD" BorderThickness="0" Padding="10, -7, 10, 0" 
+                                HorizontalAlignment="Left" Margin="192,59,0,127" Content="+" FontSize="16" Width="Auto" Height="13" FontWeight="Bold">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="6.5"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Label Grid.Row ="2" Content="Due" Width="Auto" FontSize="10" Height="auto" Margin="22,86,198,70"/>
+                <Button Command="{Binding TodayButtonCommand}" HorizontalContentAlignment="Right"  Grid.Column="0" Grid.Row="2" Content="Today" Foreground="{Binding todayColor}" BorderBrush="Transparent" Background="Transparent" FontSize="10" Width="36" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,87,160,0"/>
+                <Button Command="{Binding TomorrowButtonCommand}" HorizontalContentAlignment="Right"  Grid.Row="2" Content="Tomorrow" Foreground="{Binding tomorrowColor}" BorderBrush="Transparent" Background="Transparent" FontSize="10" Width="54" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,87,88,0"/>
+                <Ellipse Grid.Column="0" Grid.Row="2" Fill="#6ad1df" HorizontalAlignment="Left" Height="4" Stroke="#6ad1df" Width="4" Margin="58,96,0,99"/>
+                <Ellipse Grid.Column="0" Grid.Row="2" Fill="#6ad1df" HorizontalAlignment="Left" Height="4" Stroke="#6ad1df" Width="4" Margin="111,96,0,99"/>
+                <Button x:Name="addDateButton" Foreground="{Binding adddateColor}" Command="{Binding AddDateButtonCommand}" HorizontalContentAlignment="Right"  Grid.Row="2" Content="Add date" BorderBrush="Transparent" Background="Transparent" FontSize="10" Width="53" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,87,24,0"/>
+                <Button Grid.Column="0" Command="{Binding AddDateButtonCommand}" Grid.Row="2" Width="7" Padding="0,0,0,0" Background="Transparent" BorderThickness="0" Margin="176,91,69,92" RenderTransformOrigin="2.857,0.562">
+                    <StackPanel>
+                        <Image Source="/Images/Icon Calendar@2x.png"/>
+                    </StackPanel>
+                </Button>
+                <Popup IsOpen="{Binding showCalendar}" StaysOpen="False" AllowsTransparency="True" HorizontalOffset="100" VerticalOffset="-70">
+                    <Calendar x:Name="CalendarControl"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" SelectedDate="{Binding DueDate}"/>
+                </Popup>
+                <Button Grid.Row="2" Command="{Binding CreateTaskButtonCommand}" IsEnabled="{Binding CreateTaskButtonEnabled}" Grid.Column="0" BorderThickness="0" HorizontalAlignment="Left" Margin="49,156,0,0" VerticalAlignment="Top" Width="157" Height="23" Foreground="White" Background="#6ad1df" FontSize="10">
+                    <Button.Resources>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="CornerRadius" Value="11.5"/>
+                        </Style>
+                    </Button.Resources>
+                    <Grid>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding FalseText}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding isEditTask}" Value="False">
+                                            <Setter Property="Text" Value="CREATE TASK"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding isEditTask}" Value="True">
+                                            <Setter Property="Text" Value="UPDATE TASK"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Button>
+                <Label Padding="0" Grid.Row ="2" Content="Start Time" Width="Auto" FontSize="10" Height="auto" Margin="28,120,175,50"/>
+                <wpfTool:DateTimeUpDown Grid.Column="0" Grid.Row="2" Format="Custom" x:Name="startTimetext" Text="{Binding startTime}"  Width="48" ShowButtonSpinner="False" DefaultValue ="12:00 AM" DisplayDefaultValueOnEmptyText ="True"
+                     FormatString="hh:mm tt" BorderBrush="#6ad1df" FontSize="10" Height="16" BorderThickness="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="74,119,0,63">
+                </wpfTool:DateTimeUpDown>
+
+                <Label Padding="0" Grid.Row ="2" Content="End Time" Width="Auto" FontSize="10" Height="auto" Margin="127,120,80,50"/>
+
+                <wpfTool:DateTimeUpDown Grid.Column="0" Grid.Row="2" Format="Custom" x:Name="endTimetext" Text="{Binding endTime}"  Width="48" ShowButtonSpinner="False" DefaultValue ="11:59 PM" DisplayDefaultValueOnEmptyText ="True"
+                     FormatString="hh:mm tt" BorderBrush="#6ad1df" FontSize="10" BorderThickness="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="170,119,0,63" Height="16">
+                </wpfTool:DateTimeUpDown>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Visibility="{Binding meetingFormVisible}" Grid.Column="0" Grid.Row="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition Height="0"/>
+                    <RowDefinition Height="177*"/>
+                </Grid.RowDefinitions>
+
+                <TextBox Grid.Column="0" Grid.Row="2" Text="{Binding meetingTitle}"  Width="204" BorderBrush="#6ad1df" BorderThickness="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="meetingTitleText" Margin="20,19,0,142"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" IsHitTestVisible="False" Text="Meeting Title" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="22,19,0,143" Foreground="#6ad1df" Opacity=".43" Width="202">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=meetingTitleText}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <!-- <Label Grid.Row ="2" Content="Meeting time" Width="Auto" FontSize="10" Height="auto" Margin="22,56,139,100"></Label>
+                <Button Command="{Binding NowButtonCommand}" HorizontalContentAlignment="Right"  Grid.Column="0" Grid.Row="2" Content="Now" Foreground="{Binding nowColor}" BorderBrush="Transparent" Background="Transparent" FontSize="10" Width="28" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,56,121,0"/>
+                <Ellipse Grid.Column="0" Grid.Row="2" Fill="#6ad1df" HorizontalAlignment="Left" Height="4" Stroke="#6ad1df" Width="4" Margin="101,66,0,112"/>
+                <Button x:Name="addMeetingDateButton" Foreground="{Binding addmeetingdateColor}" Command="{Binding AddMeetingDateButtonCommand}" HorizontalContentAlignment="Right"  Grid.Row="2" Content="Add date" BorderBrush="Transparent" Background="Transparent" FontSize="10" Width="53" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,56,58,0"/>
+                <Button Grid.Column="0" Command="{Binding AddMeetingDateButtonCommand}" BorderThickness="0" Padding="0" Background="Transparent" Grid.Row="2" Width="7" Height="8" Margin="142,64,103,110" RenderTransformOrigin="2.857,0.562">
+                    <StackPanel>
+                        <Image Source="/Images/Icon Calendar@2x.png"/>
+                    </StackPanel>
+                </Button> -->
+                <Popup IsOpen="{Binding showCalendarMeeting}" StaysOpen="False" AllowsTransparency="True" HorizontalOffset="65" VerticalOffset="-90">
+                    <Calendar
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" SelectedDate="{Binding MeetingDate}">
+                    </Calendar>
+                </Popup>
+                <Label Padding="0,0,0,0" Grid.Row ="2" Content="Invite link" Width="Auto" FontSize="10" Height="auto" Margin="27,79,183,89"/>
+                <TextBox x:Name="inviteLink" Text="{Binding InviteLink}" Grid.Column="0" Grid.Row="2"  Width="139" FontSize="10" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" Background="#203AABCD" Margin="74,80,0,90" Height="12" Padding="3,0,5,0">
+                    <TextBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+                <Grid Grid.RowSpan="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0"/>
+                        <RowDefinition Height="0"/>
+                        <RowDefinition Height="177*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Column="0" x:Name="meetingTitle" Grid.Row="2" Text="{Binding meetingTitle}"  Width="204" BorderBrush="#6ad1df" BorderThickness="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,19,0,142"/>
+                    <TextBlock Grid.Column="0" Grid.Row="2" IsHitTestVisible="False" Text="Meeting Title" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="22,19,0,143" Foreground="#6ad1df" Opacity=".43" Width="202">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=meetingTitle}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <Popup IsOpen="{Binding showCalendarMeeting}" StaysOpen="False" AllowsTransparency="True" HorizontalOffset="65" VerticalOffset="-90">
+                        <Calendar
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" SelectedDate="{Binding MeetingDate}"/>
+                    </Popup>
+                    <Button Grid.Row="2" Command="{Binding CreateMeetingButtonCommand}" IsEnabled="{Binding CreateMeetingButtonEnabled}" Grid.Column="0" BorderThickness="0" HorizontalAlignment="Left" Margin="49,156,0,0" VerticalAlignment="Top" Width="157" Height="23" Foreground="White" Background="#6ad1df" FontSize="10">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="11.5"/>
+                            </Style>
+                        </Button.Resources>
+                        <Grid>
+
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding FalseText}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding isEditMeeting}" Value="False">
+                                                <Setter Property="Text" Value="CREATE MEETING"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding isEditMeeting}" Value="True">
+                                                <Setter Property="Text" Value="UPDATE MEETING"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Button>
+                    <Label Grid.Row ="2" Content="Logo" Width="Auto" FontSize="10" Height="auto" Margin="22,105,183,51"/>
+                    <Label x:Name="logoPath" Content="{Binding LogoPath}" Grid.Column="0" Grid.Row="2"  Width="139" FontSize="10" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" Background="#203AABCD" Padding="5,0,5,0" Margin="74,111,0,58" Height="13">
+                        <Label.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="6"/>
+                            </Style>
+                        </Label.Resources>
+                        <Label.InputBindings>
+                            <MouseBinding Command="{Binding Path=LogoButtonCommand}" MouseAction="LeftClick" />
+                        </Label.InputBindings>
+                    </Label>
+                </Grid>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</UserControl>

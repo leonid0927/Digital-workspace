@@ -1,0 +1,6 @@
+framework module Pods_DigitalWorkspaceTests {
+  umbrella header "Pods-DigitalWorkspaceTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

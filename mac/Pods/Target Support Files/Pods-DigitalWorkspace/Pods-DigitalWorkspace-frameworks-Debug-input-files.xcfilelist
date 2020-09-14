@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Pods-DigitalWorkspace/Pods-DigitalWorkspace-frameworks.sh
+${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
+${BUILT_PRODUCTS_DIR}/AwaitKit/AwaitKit.framework
+${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework

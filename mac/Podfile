@@ -1,0 +1,20 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'DigitalWorkspace' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for DigitalWorkspace
+  pod “Alamofire”, "4.9"
+  pod “AwaitKit”, "5.2"
+  target 'DigitalWorkspaceTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'DigitalWorkspaceUITests' do
+    # Pods for testing
+  end
+
+end
